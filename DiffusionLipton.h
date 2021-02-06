@@ -24,7 +24,7 @@ namespace SiriusFM
 				: m_mu(a_mu),
 				  m_sigma0(a_sigma0),
 				  m_sigma1(a_sigma1),
-				  m_sigma2(a_sigma2);
+				  m_sigma2(a_sigma2)
 				{
 					if (m_sigma < 0) throw std::invalid_argument("invalid sigma");
 					if (m_sigma0 < 0 || m_sigma2 < 0 || pow(m_sigma1, 2) - 4 * m_sigma0 * m_sigma2 > 0) throw std::invalid_argument("invalid structure of vol");

@@ -22,7 +22,7 @@ namespace SiriusFM
 			DiffusionGBM(double a_kappa, double a_theta, double a_sigma)
 				: m_kappa(a_kappa),
 				  m_theta(a_theta),
-				  m_sigma(a_sigma);
+				  m_sigma(a_sigma)
 				{
 					if (m_sigma < 0) throw std::invalid_argument("invalid sigma");
 					if (m_kappa <= 0) throw std::invalid_argument("invalid beta");
