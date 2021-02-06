@@ -29,5 +29,5 @@ namespace SiriusFM
 					if (m_sigma < 0) throw std::invalid_argument("invalid sigma");
 					if (m_sigma0 < 0 || m_sigma2 < 0 || pow(m_sigma1, 2) - 4 * m_sigma0 * m_sigma2 > 0) throw std::invalid_argument("invalid structure of vol");
 				}					
-	}
+	};
 }

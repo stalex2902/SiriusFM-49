@@ -23,5 +23,5 @@ namespace SiriusFM
 				{
 					if (m_sigma < 0) throw std::invalid_argument("invalid sigma");
 				}					
-	}
+	};
 }

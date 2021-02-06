@@ -28,5 +28,5 @@ namespace SiriusFM
 					if (m_kappa <= 0) throw std::invalid_argument("invalid beta");
 					if (m_theta <= 0) throw std::invalid_argument("invalid theta");
 				}					
-	}
+	};
 }
