@@ -19,7 +19,7 @@ namespace SiriusFM
 			{
 				return (a_S < 0)? 0.0: m_sigma * pow(a_S, m_beta);
 			}
-			DiffusionGBM(double a_mu, double a_sigma, double a_beta)
+			DiffusionCEV(double a_mu, double a_sigma, double a_beta)
 				: m_mu(a_mu),
 				  m_sigma(a_sigma),
 				  m_beta(a_beta)

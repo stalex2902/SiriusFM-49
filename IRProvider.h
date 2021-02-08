@@ -2,9 +2,11 @@
 
 #include <stdexcept>
 #include <cstdlib>
+#include <cstring>
 
 namespace SiriusFM {
 	enum class CcyE {
+		UNDEFINED = -1,
 		USD = 0,
 		EUR = 1,
 		GBP = 2,
@@ -26,15 +28,15 @@ namespace SiriusFM {
 		switch (a_ccy) {
 			case CcyE::USD: return "USD";
 			case CcyE::EUR: return "EUR";
-			case Ccye::GBP: return "GBP";
+			case CcyE::GBP: return "GBP";
 			case CcyE::CHF: return "CHF";
-			case ccyE::RUB: return "RUB";
+			case CcyE::RUB: return "RUB";
 			default: throw std::invalid_argument("invalid ccy");
 		}
 	}
 
 	inline CcyE str2CcyE(char const* a_str) {
-		if (a_srt == nullptr)
+		if (a_str == nullptr)
 			throw std::invalid_argument("null string");
 		else if (strcmp(a_str, "USD") == 0)
 			return CcyE::USD;

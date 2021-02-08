@@ -17,7 +17,7 @@ namespace SiriusFM
 			double sigma(double a_S, double t) {
 				return (a_S < 0)? 0.0: m_sigma;
 			}
-			DiffusionGBM(double a_kappa, double a_theta, double a_sigma)
+			DiffusionOU(double a_kappa, double a_theta, double a_sigma)
 				: m_kappa(a_kappa),
 				  m_theta(a_theta),
 				  m_sigma(a_sigma)

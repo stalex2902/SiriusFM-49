@@ -5,7 +5,7 @@
 
 namespace SiriusFM
 {
-	class DiffusionOU {
+	class DiffusionCIR {
 		private:
 			double const m_kappa;
 			double const m_theta;
@@ -19,7 +19,7 @@ namespace SiriusFM
 			{
 				return (a_S < 0)? 0.0: m_sigma * sqrt(a_S);
 			}
-			DiffusionGBM(double a_kappa, double a_theta, double a_sigma)
+			DiffusionCIR(double a_kappa, double a_theta, double a_sigma)
 				: m_kappa(a_kappa),
 				  m_theta(a_theta),
 				  m_sigma(a_sigma)
