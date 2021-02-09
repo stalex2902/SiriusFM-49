@@ -68,12 +68,12 @@ namespace SiriusFM {
 
 				if (l == L - 1) { // last interval
 					S_n0 = S_p0 + mu0 * tlast + sigma0 * slast * Z;
-					S_n1 = S_p1 + mu1 * tlast - sigma1 + slast * Z;
+					S_n1 = S_p1 + mu1 * tlast - sigma1 * slast * Z;
 					y += tlast;
 				}
 				else { // generic case
 					S_n0 = S_p0 + mu0 * tau + sigma0 * stau * Z;
-					S_n1 = S_p1 + mu1 * tau + sigma1 * stau * Z;
+					S_n1 = S_p1 + mu1 * tau - sigma1 * stau * Z;
 					y += tau;
 				}
 				path0[l] = S_n0;

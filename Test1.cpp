@@ -7,7 +7,7 @@
 #include "MCEngine1D.hpp"
 
 using namespace SiriusFM;
-using namespace std; // only in main
+using namespace std; 
 
 int main(int argc, char* argv[]) {
 	if (argc != 7) {
@@ -33,11 +33,11 @@ int main(int argc, char* argv[]) {
 
 	DiffusionGBM diff(mu, sigma);
 
-	MCEngine1D<decltype(diff), decltype(irp), decltype(irp), CcyE, CcyE> mce(20000, 20000);
+	MCEngine1D<decltype(diff), decltype(irp), decltype(irp), CcyE, CcyE> mce(20'000, 20'000);
 	
 	time_t t0 = time(nullptr);
-	time_t T = t0 + T_days * 86000;
-	double T_years = double(T_days) / 365.25;	
+	time_t T = t0 + T_days * 86'400;
+	double T_years = double(T_days) / 365.25;
 
 	// run MC:
 	mce.Simulate<false>(t0, T, tau_min, P, S0, &diff, &irp, &irp, ccyA, ccyA);
@@ -55,10 +55,10 @@ int main(int argc, char* argv[]) {
 	int N_VP = 0; // # of valid paths
 
 	for (long p = 0; p < P1; ++p) {
-		double const* path = paths + P * L1; // current path
+		double const* path = paths + p * L1; // current path
 		double ST = path[L1 - 1]; // end-point of current path
 		// in practise, may get ST <= 0
-		if (ST <= 0.0)
+		if (ST <= 0.0) 
 			continue;
 		++N_VP;
 		double RT = log(ST / S0); // log-result

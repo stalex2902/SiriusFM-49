@@ -1,4 +1,4 @@
-TARGET = test 
+TARGET = test
 
 SOURCES = Test1 IRProviderConst
 
