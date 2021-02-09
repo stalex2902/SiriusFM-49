@@ -8,16 +8,17 @@
 
 namespace SiriusFM {
 	template<typename Diffusion1D, typename AProvider, typename BProvider, typename AssetClassA, typename AssetClassB>
+	template<bool IsRN>
 	inline void MCEngine1D<Diffusion1D, AProvider, BProvider, AssetClassA, AssetClassB>::
-	Simulate(time_t a_t0, time_t a_T, int a_tau_min, long a_P, double a_S0, Diffusion1D const* a_diff, AProvider const* a_rateA, BProvider const* a_rateB, AssetClassA a_A, AssetClassB a_B, bool a_is_RN) {
+	Simulate(time_t a_t0, time_t a_T, int a_tau_min, long a_P, double a_S0, Diffusion1D const* a_diff, AProvider const* a_rateA, BProvider const* a_rateB, AssetClassA a_A, AssetClassB a_B) {
 		// check parameters` validity:
 		assert(a_diff != nullptr && a_rateA != nullptr && a_rateB != nullptr && a_A != AssetClassA::UNDEFINED && a_B != AssetClassB::UNDEFINED && a_t0 <= a_T && a_tau_min > 0 && a_P > 0);
 		
 		time_t T_sec = a_T - a_t0;
 		time_t tau_sec = a_tau_min * 60;
 		long L_ints = (T_sec % tau_sec == 0) ? T_sec / tau_sec : T_sec / tau_sec + 1; // number of intervals
-		double tau = YearFrac(tau_sec);
-		double tlast = (T_sec % tau_sec == 0) ? tau : YearFrac(T_sec - (L_ints - 1) * tau_sec);
+		double tau = YearFracInt(tau_sec);
+		double tlast = (T_sec % tau_sec == 0) ? tau : YearFracInt(T_sec - (L_ints - 1) * tau_sec);
 		assert(tlast > 0 && tlast <= tau);
 		long L = L_ints + 1; // number of points
 		double stau = sqrt(tau);
@@ -48,7 +49,7 @@ namespace SiriusFM {
 				double mu0 = 0.0; // 2 paths
 				double mu1 = 0.0;
 
-				if (a_is_RN) { // risk-neutral case
+				if (IsRN) { // risk-neutral case
 					double delta_r = a_rateB->r(a_B, y) - a_rateA->r(a_A, y);
 					mu0 = delta_r * S_p0;
 					mu1 = delta_r * S_p1;

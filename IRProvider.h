@@ -12,7 +12,8 @@ namespace SiriusFM {
 		GBP = 2,
 		CHF = 3,
 		RUB = 4,
-		N = 5
+		ZERO = 5, // ccy with zero interest rate
+		N = 6
 	};
 
 	enum class IRModeE {
@@ -31,6 +32,7 @@ namespace SiriusFM {
 			case CcyE::GBP: return "GBP";
 			case CcyE::CHF: return "CHF";
 			case CcyE::RUB: return "RUB";
+			case CcyE::ZERO: return "ZERO";
 			default: throw std::invalid_argument("invalid ccy");
 		}
 	}
@@ -48,6 +50,8 @@ namespace SiriusFM {
 			return CcyE::CHF;
 		else if (strcmp(a_str, "RUB") == 0)
 			return CcyE::RUB;
+		else if (strcmp(a_str, "ZERO") == 0)
+			return CcyE::ZERO;
 		else
 			throw std::invalid_argument("invalid ccy");		
 	}

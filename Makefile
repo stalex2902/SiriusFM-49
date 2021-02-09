@@ -1,6 +1,6 @@
 TARGET = test 
 
-SOURCES = MCEngine_test IRProviderConst
+SOURCES = Test1 IRProviderConst
 
 EXTLIBS =
 
