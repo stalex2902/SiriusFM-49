@@ -1,11 +1,11 @@
-TARGET = ../run
+TARGET = test 
 
-SOURCES = main get_string
+SOURCES = MCEngine_test IRProviderConst
 
 EXTLIBS =
 
 CXXFLAGS += -fPIC
-CXXFLAGS += -std=c++11
+CXXFLAGS += -std=c++17
 CXXFLAGS += -O0 -g
 
 LDFLAGS += -fPIC
@@ -15,7 +15,7 @@ LDFLAGS += -Wl,--no-undefined
 
 
 BUILD_DIR = $(shell pwd)
-OBJECTS_DIR = $(BUILD_DIR)/../obj
+OBJECTS_DIR = $(BUILD_DIR)/obj
 OBJECTS = $(patsubst %, $(OBJECTS_DIR)/%.o, $(SOURCES))
 
 all: $(TARGET)
@@ -33,9 +33,6 @@ $(OBJECTS_DIR)/%.o: %.c
 
 $(TARGET) : $(OBJECTS_DIR) $(OBJECTS)
 	$(CXX) $(LDFLAGS) -o $(TARGET) $(OBJECTS) # '-Wl,-(' $(EXTLIBS)
-
-
-
 
 clean:
 	$(shell rm -fr $(OBJECTS_DIR))
