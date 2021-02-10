@@ -37,7 +37,7 @@ namespace SiriusFM {
 			MCEngine1D& operator=(MCEngine1D const&) = delete; // no operator=
 			
 			template<bool IsRN>
-			void Simulate(time_t a_t0, time_t a_T, int a_tau_min, long a_P, double a_S0, Diffusion1D const* a_diff, AProvider const* a_rateA, BProvider const* a_rateB, AssetClassA a_A, AssetClassB a_B);
+			void Simulate(time_t a_t0, time_t a_T, int a_tau_min, long a_P, Diffusion1D const* a_diff, AProvider const* a_rateA, BProvider const* a_rateB, AssetClassA a_A, AssetClassB a_B);
 
 			std::tuple<long, long, double const*> GetPaths() const { // getter
 				return (m_L <= 0 || m_P <= 0)

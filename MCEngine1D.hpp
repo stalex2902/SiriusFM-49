@@ -10,7 +10,7 @@ namespace SiriusFM {
 	template<typename Diffusion1D, typename AProvider, typename BProvider, typename AssetClassA, typename AssetClassB>
 	template<bool IsRN>
 	inline void MCEngine1D<Diffusion1D, AProvider, BProvider, AssetClassA, AssetClassB>::
-	Simulate(time_t a_t0, time_t a_T, int a_tau_min, long a_P, double a_S0, Diffusion1D const* a_diff, AProvider const* a_rateA, BProvider const* a_rateB, AssetClassA a_A, AssetClassB a_B) {
+	Simulate(time_t a_t0, time_t a_T, int a_tau_min, long a_P, Diffusion1D const* a_diff, AProvider const* a_rateA, BProvider const* a_rateB, AssetClassA a_A, AssetClassB a_B) {
 		// check parameters` validity:
 		assert(a_diff != nullptr && a_rateA != nullptr && a_rateB != nullptr && a_A != AssetClassA::UNDEFINED && a_B != AssetClassB::UNDEFINED && a_t0 <= a_T && a_tau_min > 0 && a_P > 0);
 		
@@ -38,11 +38,11 @@ namespace SiriusFM {
 		for (long p = 0; p < a_P; ++p) {
 			double* path0 = m_paths + 2 * p * L;
 			double* path1 = path0 + L;
-			path0[0] = a_S0;
-			path1[0] = a_S0;
+			path0[0] = a_diff->GetS0();
+			path1[0] = a_diff->GetS0();
 			double y = y0;
-			double S_p0 = a_S0; // previous points
-			double S_p1 = a_S0;
+			double S_p0 = a_diff->GetS0(); // previous points
+			double S_p1 = a_diff->GetS0();
 
 			for (long l = 1; l < L; ++l) {
 				// compute the trend:
