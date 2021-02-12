@@ -1,9 +1,13 @@
-#include "DiffusionGBM.h"
-#include "IRProviderConst.h"
-#include "MCEngine1D.hpp"
-#include "VanillaOption.h"
+/*
+ * Testing MC Path Evaluator for option pricing: draft version
+ */
 
 #include <iostream>
+
+#include "IRProviderConst.h"
+#include "DiffusionGBM.h"
+#include "MCEngine1D.hpp"
+#include "VanillaOption.h"
 
 namespace SiriusFM
 {

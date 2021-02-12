@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ctime>
-#include "IRP.h"
+#include "IRProvider.h"
 
 namespace SiriusFM
 {

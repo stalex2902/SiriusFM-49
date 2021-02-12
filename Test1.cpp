@@ -1,4 +1,7 @@
-/* testing GBM diffusion with Monte-Carlo */
+/* 
+ * Testing GBM diffusion with Monte-Carlo
+ * Upd: do not work with updated diffusions
+ */
 
 #include <iostream>
 

@@ -1,6 +1,6 @@
-TARGET = test2
+TARGET = ../Test4
 
-SOURCES = Test2 IRProviderConst
+SOURCES = Test4 IRProviderConst
 
 EXTLIBS =
 
