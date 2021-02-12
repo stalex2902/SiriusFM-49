@@ -1,23 +1,43 @@
 #pragma once
 
-#include <stdexcept>
+#include <ctime>
+#include "IRP.h"
 
-namespace SiriusFM {
-	class Option {
-		protected:
-			bool const m_isAmerican;
-			int const m_Tdays; // expiration time > 0
-			Option(bool a_isAmerican, int a_Tdays): 
-				m_isAmerican(a_isAmerican), 
-				m_Tdays(a_Tdays) {
-				if (m_Tdays <= 0)
-					throw std::invalid_argument("Tdays must be positive");
-			}
+namespace SiriusFM
+{
+  //=========================================================================//
+  // Fully-Generic "Option":                                                 //
+  //=========================================================================//
+	template<typename AssetClassA, typename AssetClassB>
+	class Option
+	{
 		public:
-			virtual double Payoff(long a_L, double const* a_t, double const* a_S) const = 0;
-			bool IsAmerican() const {
-				return m_isAmerican;
-			}
-			virtual ~Option() {}
+			AssetClassA const m_assetA;  // Option Underlying Instrument: A/B
+    		AssetClassB const m_assetB;
+    		time_t      const m_expirTime;
+			bool        const m_isAmerican;
+
+			Option
+   			(
+   				AssetClassA a_assetA,
+   				AssetClassB a_assetB,
+   				time_t      a_expirTime,
+				bool        a_isAmerican
+   			)
+   			: m_assetA    (a_assetA),
+ 			  m_assetB    (a_assetB),
+   			  m_expirTime (a_expirTime),
+   			  m_isAmerican(a_isAmerican)
+ 			{}
+
+			virtual double Payoff(long a_L, double const* a_path, 
+											double const* a_ts) const = 0;
+
+			virtual ~Option() {};
 	};
+
+  //=========================================================================//
+  // Alias: "OptionFX":                                                      //
+  //=========================================================================//
+	using OptionFX = Option<CcyE, CcyE>;
 }

@@ -1,17 +1,17 @@
-TARGET = test
+TARGET = test2
 
 SOURCES = Test2 IRProviderConst
 
 EXTLIBS =
 
-CXXFLAGS += -fPIC
-CXXFLAGS += -std=c++17
-CXXFLAGS += -O0 -g
+CXXFLAGS += -MP -MMD -fPIC
+CXXFLAGS += -std=c++17 -Wall
+CXXFLAGS += -O3 -DNDEBUG -march=native -mtune=native
 
-LDFLAGS += -fPIC
-LDFLAGS += -pthread
-LDFLAGS += -Wl,--as-needed
-LDFLAGS += -Wl,--no-undefined
+#LDFLAGS += -fPIC
+#LDFLAGS += -pthread
+#LDFLAGS += -Wl,--as-needed
+#LDFLAGS += -Wl,--no-undefined
 
 
 BUILD_DIR = $(shell pwd)
@@ -33,6 +33,7 @@ $(OBJECTS_DIR)/%.o: %.c
 
 $(TARGET) : $(OBJECTS_DIR) $(OBJECTS)
 	$(CXX) $(LDFLAGS) -o $(TARGET) $(OBJECTS) # '-Wl,-(' $(EXTLIBS)
+
 
 clean:
 	$(shell rm -fr $(OBJECTS_DIR))

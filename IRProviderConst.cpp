@@ -4,17 +4,27 @@
 #include "IRProviderConst.h"
 
 namespace SiriusFM {
-	IRProvider<IRModeE::Const>::IRProvider(char const* a_file) {
-		char buff[255];
-		m_IRs[int(CcyE::N)] = {0}; // memset(m_IRs, 0.0, CcyE::N)
-		if (a_file == nullptr || *a_file == '\0')
+	constexpr int BUF_SIZE = 1024;
+	constexpr int CCY_SIZE = 3;
+
+	IRProvider<IRModeE::Const>::IRProvider(const char* a_file) {
+
+		FILE* src = fopen(a_file, "r");
+		char buf[BUF_SIZE];
+		char ccy[CCY_SIZE + 1];
+
+		for (int k = 0; k < int(CcyE::N); ++k)
+			m_IRs[k] = 0;
+
+		if (a_file == nullptr) // check if a_file empty
 			return;
-		FILE* source = fopen(a_file, "r");
-		while (fgets(buff, 255, source) != nullptr) {
-			buff[3] = '\0';
-			int code = int(str2CcyE(buff));
-			double r = std::atof(buff + 4);
+		
+		if (!src)
+			throw std::invalid_argument("...");
+
+		while (fgets(ccy, CCY_SIZE + 1, src)) {
+			fgets(buf, BUF_SIZE, src);
+			m_IRs[int(Str2CcyE(ccy))] = strtod(buf + 2, nullptr); // consider buf+1
 		}
-		fclose(source);
 	}
 }

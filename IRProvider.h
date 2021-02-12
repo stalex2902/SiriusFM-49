@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdexcept>
-#include <cstdlib>
 #include <cstring>
 
 namespace SiriusFM {
@@ -37,7 +36,7 @@ namespace SiriusFM {
 		}
 	}
 
-	inline CcyE str2CcyE(char const* a_str) {
+	inline CcyE Str2CcyE(char const* a_str) {
 		if (a_str == nullptr)
 			throw std::invalid_argument("null string");
 		else if (strcmp(a_str, "USD") == 0)

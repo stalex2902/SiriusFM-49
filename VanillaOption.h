@@ -1,41 +1,80 @@
 #pragma once
 
 #include <algorithm>
+#include <cmath>
+#include <cassert>
 
 #include "Option.h"
 
 namespace SiriusFM {
-	class EurCallOption final: public Option {
+	//=================================================================//
+	// Generic European Call:                                          //
+	//=================================================================//
+	template<typename AssetClassA, typename AssetClassB>
+	class EurCallOption final: public Option<AssetClassA, AssetClassB> {
 		private:
 			double const m_K;
 		public:
-			EurCallOption(double a_K, int a_Tdays):
-			Option(false, a_Tdays),
-			m_K(a_K) {
+			EurCallOption
+			(
+				AssetClassA a_assetA,
+				AssetClassB a_assetB,
+				double a_K, 
+				time_t a_expirTime
+			)
+			: Option<AssetClassA, AssetClassB>(a_assetA, a_assetB, 
+									a_expirTime, false), // isAmerican=false
+			  m_K(a_K)
+			{
 				if (m_K <= 0)
 					throw std::invalid_argument("K must be positive");
 			}
+
 			~EurCallOption() override {}
-			double Payoff(long a_l, double const* a_t, double const* a_S) const override {
-				assert(a_l > 0 && a_S != nullptr); // TODO: && a_T != nullptr
-				return std::max<double>(a_S[a_l - 1] - m_K, 0.0);
+
+			virtual double Payoff(long a_L, double const* a_path, // virtual???
+						  double const* a_ts = nullptr) const override {
+				assert(a_L > 0 && a_path != nullptr);
+				return std::max<double>(a_path[a_L - 1] - m_K, 0.0);
 			}
 	};
+	//=================================================================//
+	// Generic European Put                                            //
+	//=================================================================//
 	
-	class EurPutOption final: public Option {
+	template<typename AssetClassA, typename AssetClassB>
+	class EurPutOption final: public Option<AssetClassA, AssetClassB> {
 		private:
 			double const m_K;
 		public:
-			EurPutOption(double a_K, int a_Tdays):
-			Option(false, a_Tdays),
-			m_K(a_K) {
+			EurPutOption
+			(
+				AssetClassA a_assetA,
+				AssetClassB a_assetB,
+				double a_K,
+				time_t a_expirTime
+			)
+			: Option<AssetClassA, AssetClassB>(a_assetA, a_assetB, 
+									a_expirTime, false), // isAmerican=false
+			  m_K(a_K) 
+			{
 				if (m_K <= 0)
 					throw std::invalid_argument("K must be positive");
 			}
+
 			~EurPutOption() override {}
-			double Payoff(long a_l, double const* a_t, double const* a_S) const override {
-				assert(a_l > 0 && a_S != nullptr);
-				return std::max<double>(m_K - a_S[a_l - 1], 0.0);
+	
+			double Payoff(long a_L, double const* a_path,
+						  double const* a_ts = nullptr) const override {
+				assert(a_L > 0 && a_path != nullptr);
+				return std::max<double>(m_K - a_path[a_L - 1], 0.0);
 			}
 	};
+	//==================================================================//
+	// Aliases:                                                         //
+	//==================================================================//
+
+	using EurCallOptionFX = EurCallOption<CcyE, CcyE>;
+	using EurPutOptionFX  = EurPutOption <CcyE, CcyE>;
+
 }
