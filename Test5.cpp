@@ -1,22 +1,16 @@
 //==========================================================================//
-//                                "Test4.cpp"                               //
-// Testing MCOptionHedger1D: evaluating portfolio with hedged options       //
+//                               "Test5.cpp"                                //
+// Testing GridNOP1D_S3_RKC1                                                //
 //==========================================================================//
 
 #include "DiffusionGBM.h"
-#include "BSM.hpp"
-#include "MCOptionHedger1D.hpp"
+#include "VanillaOption.h"
+#include "GridOP1D_S3_RKC1.hpp"
 
 using namespace SiriusFM;
 using namespace std;
 
-int main(int argc, char** argv)
-{
-	if(argc != 10) {
-		cerr << "params: mu, sigma, S0,\nCall/Put, K,
-																			Tdays,\ndeltaAcc,\ntau_mins, P\n";
-		return 1;
-	}
+int main(int argc, char const* argv[]) {
 
 	double mu 			= atof(argv[1]);
 	double sigma 		= atof(argv[2]);

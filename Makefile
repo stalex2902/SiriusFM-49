@@ -1,12 +1,16 @@
-TARGET = ../Test4
+CXX = nvc++
 
-SOURCES = Test4 IRProviderConst
+TARGET = Test3
+
+SOURCES = Test3 IRProviderConst
 
 EXTLIBS =
 
-CXXFLAGS += -MP -MMD -fPIC
+CXXFLAGS += -fomp
+#CXXFLAGS += -MP -MMD -fPIC
 CXXFLAGS += -std=c++17 -Wall
-CXXFLAGS += -O3 -DNDEBUG -march=native -mtune=native
+CXXFLAGS += -O3 -DNDEBUG -march=native
+#CXXFLAGS += -O3 -DNDEBUG -march=native -mtune=native
 
 #LDFLAGS += -fPIC
 #LDFLAGS += -pthread

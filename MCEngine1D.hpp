@@ -34,14 +34,14 @@ namespace SiriusFM {
 	{
 		// check parameters` validity:
 		assert(
-			a_diff 	   != nullptr 
-			&& a_rateA != nullptr 
-			&& a_rateB != nullptr 
-			&& a_assetA != AssetClassA::UNDEFINED 
-			&& a_assetB != AssetClassB::UNDEFINED 
-			&& a_t0 <= a_T 
-			&& a_tau_min > 0 
-			&& a_P > 0
+			a_diff 	   	 	!= nullptr 
+			&& a_rateA 	 	!= nullptr 
+			&& a_rateB 	 	!= nullptr 
+			&& a_assetA  	!= AssetClassA::UNDEFINED 
+			&& a_assetB  	!= AssetClassB::UNDEFINED 
+			&& a_t0 		 	<= a_T 
+			&& a_tau_min 	> 0 
+			&& a_P				> 0
 			&& a_PathEval != nullptr);
 		
 		time_t T_sec = a_T - a_t0;
@@ -56,7 +56,7 @@ namespace SiriusFM {
 		double tlast = 
 			(T_sec % tau_sec == 0) 
 			? tau 
-			: YearFracInt(T_sec - (L_ints - 1) * tau_sec); // L_ints or L???
+			: YearFracInt(T_sec - (L_ints - 1) * tau_sec);
 
 		assert(tlast > 0 && tlast <= tau);
 		long L = L_ints + 1; // number of points
@@ -70,12 +70,16 @@ namespace SiriusFM {
 		if (L > m_MaxL)
 			throw std::invalid_argument("invalid path parameters");
 
-		std::normal_distribution<> N01(0.0, 1.0); // create standard normal distribution
-		std::mt19937_64 U(a_useTimerSeed ? time(nullptr) : 0); // uniform random number generator
+		std::normal_distribution<> N01(0.0, 1.0); 
+																			// create standard normal distribution
+		std::mt19937_64 U(a_useTimerSeed ? time(nullptr) : 0);
+																			// uniform random number generator
 		
 		long PM = (m_MaxL * m_MaxPM) / L; // PM: # of paths stored in memory
+
 		if (PM % 2 != 0)
 			--PM;
+
 		assert(PM > 0 && PM % 2 == 0);
 		
 		long PMh = PM / 2;
@@ -90,8 +94,9 @@ namespace SiriusFM {
 		m_ts[L - 1] = m_ts[L - 2] + tlast;
 
 		// main simulation loop:
-
 		for (long i = 0; i < PI; ++i) {
+
+			// generate in-memory paths
 			for (long p = 0; p < PMh; ++p) {
 				
 				double* path0 = m_paths + 2 * p * L;
@@ -114,10 +119,12 @@ namespace SiriusFM {
 						mu0 = delta_r * S_p0;
 						mu1 = delta_r * S_p1;
 					}
+
 					else {
 						mu0 = a_diff->mu(S_p0, y);
 						mu1 = a_diff->mu(S_p1, y);
 					}
+
 					// compute volatility
 					double sigma0 = a_diff->sigma(S_p0, y);
 					double sigma1 = a_diff->sigma(S_p1, y);
@@ -131,16 +138,19 @@ namespace SiriusFM {
 						S_n0 = S_p0 + mu0 * tlast + sigma0 * slast * Z;
 						S_n1 = S_p1 + mu1 * tlast - sigma1 * slast * Z;
 					}
+
 					else { // generic case
 						S_n0 = S_p0 + mu0 * tau + sigma0 * stau * Z;
 						S_n1 = S_p1 + mu1 * tau - sigma1 * stau * Z;
 					}
+
 					path0[l] = S_n0;
 					path1[l] = S_n1;
 					S_p0 = S_n0;
 					S_p1 = S_n1;
 				} // end of l-loop
 			} // end of p-loop
+
 			// Evaluate the in-memory paths
 			(*a_PathEval)(L, PM, m_paths, m_ts);
 		} // end of i-loop
