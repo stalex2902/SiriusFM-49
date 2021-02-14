@@ -12,92 +12,52 @@ using namespace std;
 
 int main(int argc, char const* argv[]) {
 
-	double mu 			= atof(argv[1]);
-	double sigma 		= atof(argv[2]);
-	double S0 			= atof(argv[3]);
-	const char* OptType = argv[4];
-	double K 			= atof(argv[5]);
-	long T_days 		= atol(argv[6]);
-	double deltaAcc 	= atof(argv[7]);
-	int tau_mins 		= atoi(argv[8]);
-	long P 				= atol(argv[9]);
+	if (argc != 8) {
+		cerr << "PARAMS:\nsigma, S0,\n{Call/Put}, K, Tdays,\nNS, tauMins\n";
+	}
 
-	assert(sigma > 0 && S0 > 0 && T_days > 0 
-						&& tau_mins > 0 && P > 0 && K > 0);
+	double sigma 				= atof(argv[1]);
+	double S0 					= atof(argv[2]);
+	const char* OptType = argv[3];
+	double K 						= atof(argv[4]);
+	long Tdays 					= atol(argv[5]);
+	int NS 							= atof(argv[6]);
+	int tauMins 				= atoi(argv[7]);
+
+	assert(sigma > 0 && S0 > 0 && Tdays > 0 
+						&& tau_mins > 0 && NS > 0);
 
 	CcyE ccyA = CcyE::USD;
-	CcyE ccyB = CcyE::USD;
+	CcyE ccyB = CcyE::RUB;
 
 	char const* ratesFileA = nullptr;
 	char const* ratesFileB = nullptr;
-	bool useTimerSeed = true;
 
-	DiffusionGBM diff(mu, sigma, S0);
+	DiffusionGBM diff(0.0, sigma, S0); // Trend is irrelevamt here
 
-	// The following Hedger is for FX (CcyE / CcyE):
-	MCOptionHedger1D<decltype(diff), IRPConst, IRPConst, CcyE, CcyE> 
-		hedger(&diff, ratesFileA, ratesFileB, useTimerSeed);
+	// create the option spec:
+	time_t t0 = time(nullptr);				  // ans start time
+	time_t T = t0 + SEC_IN_DAY * Tdays; // abs expir time
 
-	// Create the Option spec:
-	time_t t0 = time(nullptr);   		  // abs start time
-	time_t T  = t0 + SEC_IN_DAY * T_days; // abs expir time in seconds since epoch
-	double TTE = YearFracInt(T - t0);		  // time to expir in seconds
-	double Ty = EPOCH_BEGIN + double(T) / AVG_SEC_IN_YEAR;
-									// expir time as YYYY.YearFrac
-
-	OptionFX const* opt = nullptr;
-	decltype(hedger)::DeltaFunc const* deltaFunc = nullptr;
-
-	double C0 = 0.0;
-
-	// rates are const here:
-	double rateA = hedger.GetRateA(ccyA, 0.0); // any t
-	double rateB = hedger.GetRateB(ccyB, 0.0);
-
-	// Closures for deltas:
-	function<double(double, double)> deltaCall
-	(
-		[K, Ty, rateA, rateB, sigma]
-		(double a_St, double a_t) -> double {
-			double currTTE = Ty - a_t;
-			return BSMDeltaCall(a_St, K, currTTE, rateA, rateB, sigma);
-		}
-	);
-
-	function<double(double, double)> deltaPut
-	(
-		[K, Ty, rateA, rateB, sigma]
-		(double a_St, double a_t) -> double {
-			double currTTE = Ty - a_t;
-			return BSMDeltaPut(a_St, K, currTTE, rateA, rateB, sigma);
-		}
-	);
-
-  	if (strcmp(OptType, "Call") == 0) {
+	Option const* opt = nullptr;
+	
+	if (strcmp(OptType, "Call") == 0)
 		opt = new EurCallOptionFX(ccyA, ccyB, K, T);
-		deltaFunc = &deltaCall;
-		C0 = BSMPxCall(S0, K, TTE, rateA, rateB, sigma);
-	}
 
-	else if (strcmp(OptType, "Put") == 0) {
+	else if (strcmp(OptType, "Put")  == 0)
 		opt = new EurPutOptionFX (ccyA, ccyB, K, T);
-	  	deltaFunc = &deltaPut;
-	  	C0 = BSMPxPut(S0, K, TTE, rateA, rateB, sigma);
-	}
 
 	else
-		throw invalid_argument("Invalid option type");
+		throw invalid_argument("Bad option type");
 
-	// Presto! Run the Hedger!
-	auto res = hedger.SimulateHedging(opt, t0, C0, deltaFunc, deltaAcc, tau_mins, P);
+	// Construct the Grid Pricer (with default Max Geometry):
+	GridNOP1D_S3_RKC1<decltype(diff), IRPConst, IRPConst, CcyE, CcyE>
+		grid(ratesFileA, ratesFileB);
 
-	double EPnL   = get<0>(res);
-	double StDPnL = get<1>(res);
-	double minPnL = get<2>(res);
-	double maxPnL = get<3>(res);
-  
-	cout << "E[PnL] = " << EPnL << ", StD[PnL] = " << StDPnL << ", Max[Pnl] = " 
-									<< maxPnL << ", Min[PnL] = " << minPnL << endl; 
-	delete opt;
+  // Presto! Run Backward Induction on the Grid (with default BFactor):
+  grid.RunBI(opt, &diff, S0, t0, NS, tauMins);
+
+  delete opt;
+
 	return 0;
 }

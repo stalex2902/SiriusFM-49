@@ -3,8 +3,10 @@
 // Grid Pricer for Non-IR Options with 1D diffusions, using 3-point stencils//
 //                and Runge-Kutta-Chebyshev time marshalling                //
 //--------------------------------------------------------------------------//
-// Non-IRP means that:
-// (1) ...
+// Non-IRP means that:                                                      //
+// * S >= 0 always;                                                         //
+// * rates don`t depend on S;                                               //
+// * not suitable for very long TTE (no boynding box scaling with time)     //
 //==========================================================================//
 
 #pragma once
@@ -24,6 +26,9 @@ namespace SiriusFM {}
 		typename AssetClassA, typename AssetClassB                                  
 	>
 	class GridNOP1D_S3_RKC1 {
+		//----------------------------------------------------------------------//
+		// Data fields:                                                         //
+		//----------------------------------------------------------------------//
 		private:
 			AProvider 		m_irpA;
 			BProvider 		m_irpB;
@@ -37,15 +42,15 @@ namespace SiriusFM {}
 
 		public:
 			// non-default Ctor:
-			GridNOP1D_S#_RKC1
+			GridNOP1D_S3_RKC1
 			(
-				char const a_ratesFileA,
-				char const a_ratesFileB,
-				long a_maxN,
-				long a_maxM
+				char const* a_ratesFileA,
+				char const* a_ratesFileB,
+				long a_maxN = 2048,
+				long a_maxM = 210'384
 			)
-			: m_irpA(m_ratesFileA),
-				m_irpB(m_ratesFileB),
+			: m_irpA(a_ratesFileA),
+				m_irpB(a_ratesFileB),
 				m_maxN(a_maxN),
 				m_maxM(a_maxM),
 				m_grid(new double[m_maxN * m_maxN]),
@@ -62,28 +67,27 @@ namespace SiriusFM {}
 				delete[] (m_S);
 				delete[] (m_ES);
 				delete[] (m_VarS);
-				m_grid = nullptr; // TODO: fix
-				m_ts	 = nullptr;
-				m_S 	 = nullptr;
-				m_ES	 = nullptr;
-				m_VarS = nullptr;
+				const_cast<double*&>(m_grid) = nullptr;
+				const_cast<double*&>(m_S) 	 = nullptr;
+				const_cast<double*&>(m_ts) 	 = nullptr;
+				const_cast<double*&>(m_ES) 	 = nullptr;
+				const_cast<double*&>(m_VarS) = nullptr;
 			}
 
 			//--------------------------------------------------------------------//
-			// "RunBI":                                                           //
-			// Performs Backward-Induction                                        //			
+			// "RunBI": performs Backward-Induction                               //			
 			//--------------------------------------------------------------------//
 			
 			void RunBI
 			(
 				Option<AssetClassA, AssetClassB> const* a_option, // option spec
 				Diffusion1D const* a_diff,
-				
 				// grid params:
-				double a_S0,	 // S(t0): may differ from Diffusion1D starting point
-				time_t t0, 		 // abs pricing time 
+				double a_S0,	 					// S(t0): may differ from Diffusion1D starting point
+				time_t t0, 		 					// abs pricing time 
 				long a_N 				 = 500, // # of S-points
 				int a_tauMins 	 = 30, 	// TimeStep in mins
 				double a_BFactor = 4.5, // # of StDs for upper bound
 			);
 	};
+}

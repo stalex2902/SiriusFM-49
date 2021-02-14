@@ -13,8 +13,7 @@ using namespace std;
 int main(int argc, char** argv)
 {
 	if(argc != 10) {
-		cerr << "params: mu, sigma, S0,\nCall/Put, K,
-																			Tdays,\ndeltaAcc,\ntau_mins, P\n";
+		cerr << "params: mu, sigma, S0,\nCall/Put, K, Tdays,\ndeltaAcc,\ntau_mins, P\n";
 		return 1;
 	}
 
@@ -95,7 +94,8 @@ int main(int argc, char** argv)
 		throw invalid_argument("Invalid option type");
 
 	// Presto! Run the Hedger!
-	auto res = hedger.SimulateHedging(opt, t0, C0, deltaFunc, deltaAcc, tau_mins, P);
+	auto res = hedger.SimulateHedging(opt, t0, C0, deltaFunc, 
+																						deltaAcc, tau_mins, P);
 
 	double EPnL   = get<0>(res);
 	double StDPnL = get<1>(res);
