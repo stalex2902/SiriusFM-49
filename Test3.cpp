@@ -10,19 +10,20 @@ using namespace SiriusFM;
 using namespace std;
 
 int main(int argc, char** argv) {
+
 	if(argc != 9) {
 		cerr << "params: mu, sigma, S0,\nCall/Put, K, Tdays,\ntau_mins, P\n";
 		return 1;
 	}
 
-	double mu 			= atof(argv[1]);
-	double sigma 		= atof(argv[2]);
-	double S0 			= atof(argv[3]);
+	double mu 					= atof(argv[1]);
+	double sigma 				= atof(argv[2]);
+	double S0 					= atof(argv[3]);
 	const char* OptType = argv[4];
-	double K 	 		= atof(argv[5]);
-	long T_days  		= atol(argv[6]);
-	int tau_mins 		= atoi(argv[7]);
-	long P 				= atol(argv[8]);
+	double K 	 					= atof(argv[5]);
+	long T_days  				= atol(argv[6]);
+	int tau_mins 				= atoi(argv[7]);
+	long P 							= atol(argv[8]);
 
 	assert(sigma > 0 && S0 > 0 &&
 		   T_days > 0 && tau_mins > 0 &&
@@ -48,10 +49,10 @@ int main(int argc, char** argv) {
 	OptionFX const* opt = nullptr;
 
 	if (strcmp(OptType, "Call") == 0)
-		opt = new EurCallOptionFX(ccyA, ccyB, K, T);
+		opt = new CallOptionFX(ccyA, ccyB, K, T, false); // isAmerican=false
 
 	else if (strcmp(OptType, "Put") == 0)
-		opt = new EurPutOptionFX (ccyA, ccyB, K, T);
+		opt = new PutOptionFX (ccyA, ccyB, K, T, false);
 
 	else
 		throw invalid_argument("Bad option type");

@@ -5,9 +5,9 @@
 
 namespace SiriusFM {
 
-	//=======================================================================================//
-	// "MCOptionPricer1D::Px":                                                               //
-	//=======================================================================================//	
+	//========================================================================//
+	// MCOptionPricer1D::Px"                                                  //
+	//========================================================================//	
 
 	template
 	<
@@ -26,14 +26,17 @@ namespace SiriusFM {
 	)
 	{
 		assert(a_option != nullptr && a_tauMins > 0 && a_P > 0);
+
+		if (a_option->m_isAmerican)
+			throw std::invalid_argument("MC cannot price American options");
 		
 		// Path Evaluator:
 		OPPathEval pathEval(a_option);
 
 		// run MC: Option pricing is Risk-Neutral
 		m_mce.template Simulate<true>
-		(a_t0, a_option->m_expirTime, a_tauMins, a_P, m_useTimerSeed,
-		 m_diff, &m_irpA, &m_irpB, a_option->m_assetA, a_option->m_assetB, &pathEval);
+		(a_t0, a_option->m_expirTime, a_tauMins, a_P, m_useTimerSeed, m_diff,
+				&m_irpA, &m_irpB, a_option->m_assetA, a_option->m_assetB, &pathEval);
 		
 		// get the price from Path Eval:
 		double px = pathEval.GetPx();

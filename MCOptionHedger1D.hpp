@@ -5,9 +5,9 @@
 
 namespace SiriusFM {
 
-	//=================================================================================//
-	// "MCOptionHedger1D::SimulateHedging":                                            //
-	//=================================================================================//	
+	//========================================================================//
+	// MCOptionHedger1D::SimulateHedging:                                     //
+	//========================================================================//	
 
 	template
 	<
@@ -32,12 +32,13 @@ namespace SiriusFM {
 										&& a_deltaFunc != nullptr && a_deltaAcc > 0);
 		
 		// Path Evaluator:
-		OHPathEval pathEval(a_option, &m_irpA, &m_irpB, a_C0, a_deltaFunc, a_deltaAcc);
+		OHPathEval pathEval(a_option, &m_irpA, &m_irpB, a_C0,
+																									a_deltaFunc, a_deltaAcc);
 
 		// run MC in REAL measure and return the stats:
 		m_mce.template Simulate<false> // isRN = false
-		(a_t0, a_option->m_expirTime, a_tauMins, a_P, m_useTimerSeed,
-		 m_diff, &m_irpA, &m_irpB, a_option->m_assetA, a_option->m_assetB, &pathEval);
+		(a_t0, a_option->m_expirTime, a_tauMins, a_P, m_useTimerSeed, m_diff,
+				&m_irpA, &m_irpB, a_option->m_assetA, a_option->m_assetB, &pathEval);
 		
 		// get PnL stats from Path Eval and return:
 		return pathEval.GetStats();

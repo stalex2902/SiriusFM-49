@@ -10,10 +10,10 @@
 using namespace SiriusFM;
 using namespace std;
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 	if(argc != 10) {
-		cerr << "params: mu, sigma, S0,\nCall/Put, K, Tdays,\ndeltaAcc,\ntau_mins, P\n";
+		cerr << "params: mu, sigma, S0,\nCall/Put, K, Tdays,\ndeltaAcc" 
+																													"\ntau_mins, P\n";
 		return 1;
 	}
 
@@ -44,11 +44,11 @@ int main(int argc, char** argv)
 		hedger(&diff, ratesFileA, ratesFileB, useTimerSeed);
 
 	// Create the Option spec:
-	time_t t0 = time(nullptr);   		  // abs start time
-	time_t T  = t0 + SEC_IN_DAY * T_days; // abs expir time in seconds since epoch
-	double TTE = YearFracInt(T - t0);		  // time to expir in seconds
+	time_t t0 = time(nullptr);   		  		// abs start time
+	time_t T  = t0 + SEC_IN_DAY * T_days; // abs expir time in sec since epoch
+	double TTE = YearFracInt(T - t0);		  // time to expir in sec
 	double Ty = EPOCH_BEGIN + double(T) / AVG_SEC_IN_YEAR;
-									// expir time as YYYY.YearFrac
+																				// expir time as YYYY.YearFrac
 
 	OptionFX const* opt = nullptr;
 	decltype(hedger)::DeltaFunc const* deltaFunc = nullptr;
@@ -79,13 +79,13 @@ int main(int argc, char** argv)
 	);
 
   	if (strcmp(OptType, "Call") == 0) {
-		opt = new EurCallOptionFX(ccyA, ccyB, K, T);
+		opt = new CallOptionFX(ccyA, ccyB, K, T, false); // isAmerican=false
 		deltaFunc = &deltaCall;
 		C0 = BSMPxCall(S0, K, TTE, rateA, rateB, sigma);
 	}
 
 	else if (strcmp(OptType, "Put") == 0) {
-		opt = new EurPutOptionFX (ccyA, ccyB, K, T);
+		opt = new PutOptionFX (ccyA, ccyB, K, T, false);
 	  	deltaFunc = &deltaPut;
 	  	C0 = BSMPxPut(S0, K, TTE, rateA, rateB, sigma);
 	}

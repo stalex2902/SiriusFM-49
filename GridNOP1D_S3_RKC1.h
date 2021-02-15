@@ -12,9 +12,11 @@
 #pragma once
 
 #include "IRProvider.h"                                                         
-#include "Option.h"  
+#include "Option.h"
 
-namespace SiriusFM {}
+#include <tuple>
+
+namespace SiriusFM {
 
 	//========================================================================//
 	// GridNOP1D class:                                                       //
@@ -32,13 +34,17 @@ namespace SiriusFM {}
 		private:
 			AProvider 		m_irpA;
 			BProvider 		m_irpB;
-			long 					m_maxM; // max # of t points
-			long 					m_maxN; // max # of S points
-			double* const m_grid; // 2D grid as 1D array
-			double* const m_ts; 	// timeline
-			double* const m_S;		// S-line
-			double* const m_ES; 	// E[S](t)
-			double* const m_VarS; // Var[S](t)
+			long 					m_maxM;  // max # of t points
+			long 					m_maxN;  // max # of S points
+			double* const m_grid;  // 2D grid as 1D array
+			double* const m_ts; 	 // timeline
+			double* const m_S;		 // S-line
+			double* const m_ES; 	 // E[S](t)
+			double* const m_VarS;  // Var[S](t)
+			int 					m_N;		 // actual # of S-point
+			int 					m_M;		 // actual #  of t-points
+			int 					m_i0;		 // S(i0) = S0
+			bool					m_isFwd; // last run was Fwd
 
 		public:
 			// non-default Ctor:
@@ -49,19 +55,30 @@ namespace SiriusFM {}
 				long a_maxN = 2048,
 				long a_maxM = 210'384
 			)
-			: m_irpA(a_ratesFileA),
-				m_irpB(a_ratesFileB),
-				m_maxN(a_maxN),
-				m_maxM(a_maxM),
-				m_grid(new double[m_maxN * m_maxN]),
-				m_ts	(new double[m_maxM]),
-				m_S		(new double[m_maxN]),
-				m_ES	(new double[m_maxM]),
-				m_VarS(new double[m_maxM])
-			{}
-			
+			: m_irpA (a_ratesFileA),
+				m_irpB (a_ratesFileB),
+				m_maxN (a_maxN),
+				m_maxM (a_maxM),
+				m_grid (new double[m_maxN * m_maxN]),
+				m_ts	 (new double[m_maxM]),
+				m_S		 (new double[m_maxN]),
+				m_ES	 (new double[m_maxM]),
+				m_VarS (new double[m_maxM]),
+				m_N		 (0),
+				m_M		 (0),
+				m_i0	 (0),
+				m_isFwd(false)
+			{
+				// zero-out all arrays:
+				memset(m_grid, 0, m_maxN * m_maxM * sizeof(double));
+				memset(m_S, 	 0, m_maxN 					* sizeof(double));
+				memset(m_ts, 	 0, m_maxM 					* sizeof(double));	
+				memset(m_ES, 	 0, m_maxM 					* sizeof(double));		
+				memset(m_VarS, 0, m_maxM 					* sizeof(double));
+			}
+
 			// non-default Dtor:
-			~GridNOP1D_S#_RKC1() {
+			~GridNOP1D_S3_RKC1() {
 				delete[] (m_grid);
 				delete[] (m_ts);
 				delete[] (m_S);
@@ -75,19 +92,24 @@ namespace SiriusFM {}
 			}
 
 			//--------------------------------------------------------------------//
-			// "RunBI": performs Backward-Induction                               //			
+			// "Run": performs Backward or Forward-Induction                      //			
 			//--------------------------------------------------------------------//
-			
-			void RunBI
+			template<bool IsFwd> // =true for Fwd induction
+			void Run
 			(
 				Option<AssetClassA, AssetClassB> const* a_option, // option spec
 				Diffusion1D const* a_diff,
 				// grid params:
-				double a_S0,	 					// S(t0): may differ from Diffusion1D starting point
-				time_t t0, 		 					// abs pricing time 
-				long a_N 				 = 500, // # of S-points
+				double a_S0,	 					// S(t0): may differ from Diffusion1D S0
+				time_t a_t0, 						// abs starting time
+				long a_Nints		 = 500, // # of S-intervals
 				int a_tauMins 	 = 30, 	// TimeStep in mins
-				double a_BFactor = 4.5, // # of StDs for upper bound
+				double a_BFactor = 4.5 	// # of StDs for upper bound
 			);
+
+			//--------------------------------------------------------------------//
+			// GetPxDeltaGamma0: return Px, Delta and Gamma at t=0                //
+			//--------------------------------------------------------------------//
+			std::tuple<double, double, double> GetPxDeltaGamma0() const;
 	};
 }
