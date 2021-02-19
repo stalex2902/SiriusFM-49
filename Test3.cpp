@@ -1,6 +1,7 @@
-/*
- * Testing MCOptionPricer1D: evaluating prices of vanilla options
- */
+//==========================================================================//
+//                              "Test3.cpp"                                 //
+// Testing "MCOptionPricer1D": evaluating prices of vanilla options         //
+//==========================================================================//
 
 #include "DiffusionGBM.h"
 #include "VanillaOption.h"
@@ -16,24 +17,24 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	double mu 					= atof(argv[1]);
-	double sigma 				= atof(argv[2]);
-	double S0 					= atof(argv[3]);
-	const char* OptType = argv[4];
-	double K 	 					= atof(argv[5]);
-	long T_days  				= atol(argv[6]);
-	int tau_mins 				= atoi(argv[7]);
-	long P 							= atol(argv[8]);
+	double 			mu			 = atof(argv[1]);
+	double 			sigm		 = atof(argv[2]);
+	double 			S0			 = atof(argv[3]);
+	const char* OptType  = 	    argv[4];
+	double 			K 			 = atof(argv[5]);
+	long 				T_days	 = atol(argv[6]);
+	int 				tau_mins = atoi(argv[7]);
+	long 				P				 = atol(argv[8]);
 
-	assert(sigma > 0 && S0 > 0 &&
-		   T_days > 0 && tau_mins > 0 &&
-		   P > 0 && K > 0);
+	assert(sigma > 0 && S0 > 0 && T_days > 0 
+					&& tau_mins > 0 && P > 0 && K > 0);
 
 	CcyE ccyA = CcyE::USD;
 	CcyE ccyB = CcyE::USD;
 
 	char const* ratesFileA = nullptr;
 	char const* ratesFileB = nullptr;
+
 	bool useTimerSeed = true;
 
 	DiffusionGBM diff(mu, sigma, S0);

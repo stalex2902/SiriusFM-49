@@ -1,3 +1,8 @@
+//==========================================================================//
+//                             "VanillaOption.h"                            //
+// Declaration of Call- and Put-options (European/American but not Asian)   //
+//==========================================================================//
+
 #pragma once
 
 #include <algorithm>
@@ -9,9 +14,8 @@
 namespace SiriusFM {
 
 	//------------------------------------------------------------------------//
-	// Generic European or American (but not Asian )Call:                     //
+	// Generic European or American (but not Asian) Call:                     //
 	//------------------------------------------------------------------------//
-
 	template<typename AssetClassA, typename AssetClassB>
 	class CallOption final: public Option<AssetClassA, AssetClassB> {
 		private:
@@ -45,8 +49,7 @@ namespace SiriusFM {
 
 	//------------------------------------------------------------------------//
 	// Generic European or American (but not Asian) Put:                      //
-	//------------------------------------------------------------------------//
-	
+	//------------------------------------------------------------------------//	
 	template<typename AssetClassA, typename AssetClassB>
 	class PutOption final: public Option<AssetClassA, AssetClassB> {
 		private:
@@ -81,7 +84,6 @@ namespace SiriusFM {
 	//-----------------------------------------------------------------------//
 	// Aliases:                                                              //
 	//-----------------------------------------------------------------------//
-
 	using CallOptionFX = CallOption<CcyE, CcyE>;
 	using PutOptionFX  = PutOption <CcyE, CcyE>;
 

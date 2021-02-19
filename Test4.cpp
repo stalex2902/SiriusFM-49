@@ -17,15 +17,15 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	double mu 			= atof(argv[1]);
-	double sigma 		= atof(argv[2]);
-	double S0 			= atof(argv[3]);
-	const char* OptType = argv[4];
-	double K 			= atof(argv[5]);
-	long T_days 		= atol(argv[6]);
-	double deltaAcc 	= atof(argv[7]);
-	int tau_mins 		= atoi(argv[8]);
-	long P 				= atol(argv[9]);
+	double 			mu 			 = atof(argv[1]);
+	double 			sigma 	 = atof(argv[2]);
+	double 			S0 			 = atof(argv[3]);
+	const char* OptType  = 			argv[4];
+	double 			K 			 = atof(argv[5]);
+	long 				T_days 	 = atol(argv[6]);
+	double 			deltaAcc = atof(argv[7]);
+	int 				tau_mins = atoi(argv[8]);
+	long 				P 			 = atol(argv[9]);
 
 	assert(sigma > 0 && S0 > 0 && T_days > 0 
 						&& tau_mins > 0 && P > 0 && K > 0);

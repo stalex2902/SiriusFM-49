@@ -1,11 +1,16 @@
+//==========================================================================//
+//                               "MCEngine1D.h"                             //
+// "MCEngine1D" class declaration                                           //
+//==========================================================================//
+
 #pragma once
+
+#include "Time.h"
 
 #include <cmath>
 #include <stdexcept>
 #include <new>
 #include <tuple>
-
-#include "Time.h"
 
 namespace SiriusFM {
 	template
@@ -15,14 +20,14 @@ namespace SiriusFM {
 	>
 	class MCEngine1D {
 		private:
-			long 	const m_MaxL; // max path length
-			long 	const m_MaxPM; // max # of paths stored in memory
+			long 		const m_MaxL; // max path length
+			long 		const m_MaxPM; // max # of paths stored in memory
 			double* const m_paths;
 			double* const m_ts;
 
 		public:
-			MCEngine1D(long a_MaxL, long a_MaxPM):
-				m_MaxL(a_MaxL),
+			MCEngine1D(long a_MaxL, long a_MaxPM)
+			: m_MaxL(a_MaxL),
 				m_MaxPM(a_MaxPM),
 				m_paths(new double[m_MaxL * m_MaxPM]),
 				m_ts(new double[m_MaxL])

@@ -18,10 +18,9 @@
 
 namespace SiriusFM {
 
-	//========================================================================//
+	//------------------------------------------------------------------------//
 	// GridNOP1D class:                                                       //
-	//========================================================================//
-
+	//------------------------------------------------------------------------//
 	template                                                                      
 	<                                                                             
 		typename Diffusion1D, typename AProvider, typename BProvider,               
@@ -84,6 +83,7 @@ namespace SiriusFM {
 				delete[] (m_S);
 				delete[] (m_ES);
 				delete[] (m_VarS);
+
 				const_cast<double*&>(m_grid) = nullptr;
 				const_cast<double*&>(m_S) 	 = nullptr;
 				const_cast<double*&>(m_ts) 	 = nullptr;

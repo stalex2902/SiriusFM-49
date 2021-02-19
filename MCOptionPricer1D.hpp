@@ -1,3 +1,8 @@
+//==========================================================================//
+//                           "MCOptionPricer1D.hpp"                         //
+// Implementation of "Px" method for option pricing                         //
+//==========================================================================//
+
 #pragma once
 
 #include "MCOptionPricer1D.h"
@@ -5,10 +10,9 @@
 
 namespace SiriusFM {
 
-	//========================================================================//
+	//------------------------------------------------------------------------//
 	// MCOptionPricer1D::Px"                                                  //
-	//========================================================================//	
-
+	//------------------------------------------------------------------------//	
 	template
 	<
 		typename Diffusion1D, typename AProvider, typename BProvider,
@@ -19,10 +23,11 @@ namespace SiriusFM {
 	Px
 	(
 		// Instrument Spec:
-		Option<AssetClassA, AssetClassB> const* a_option,
+		Option<AssetClassA, AssetClassB> 
+		const* a_option,
 		time_t a_t0,
-		int a_tauMins,
-		long a_P
+		int 	 a_tauMins,
+		long 	 a_P
 	)
 	{
 		assert(a_option != nullptr && a_tauMins > 0 && a_P > 0);

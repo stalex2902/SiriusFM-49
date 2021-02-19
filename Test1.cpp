@@ -1,13 +1,15 @@
-/* 
- * Testing GBM diffusion with Monte-Carlo
- * Upd: do not work with updated diffusions
- */
-
-#include <iostream>
+//==========================================================================//
+//                                "Test1.cpp"                               //
+// Testing GBM diffusion with MCEngine (by reconstructing model`s params)   //
+//--------------------------------------------------------------------------//
+// FIXME: do not work with updated Diffusions                               //
+//==========================================================================//
 
 #include "DiffusionGBM.h"
 #include "IRProviderConst.h"
 #include "MCEngine1D.hpp"
+
+#include <iostream>
 
 using namespace SiriusFM;
 using namespace std; 
@@ -54,9 +56,9 @@ int main(int argc, char* argv[]) {
 	double const* paths = get<2>(res);
 
 	// compute expected value and variance of log ST:
-	double E_ST = 0.0;
+	double E_ST  = 0.0;
 	double E_ST2 = 0.0; // expected value of (log ST)^2
-	int N_VP = 0; // # of valid paths
+	int 	 N_VP  = 0; // # of valid paths
 
 	for (long p = 0; p < P1; ++p) {
 		double const* path = paths + p * L1; // current path
@@ -68,7 +70,7 @@ int main(int argc, char* argv[]) {
 
 		++N_VP;
 		double RT = log(ST / S0); // log-result
-		E_ST += RT;
+		E_ST  += RT;
 		E_ST2 += RT * RT;
 	}
 

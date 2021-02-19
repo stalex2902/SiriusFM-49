@@ -15,7 +15,6 @@ namespace SiriusFM {
 	//------------------------------------------------------------------------//
 	// CDF of the Standard Normal:                                            //
 	//------------------------------------------------------------------------//
-	
 	inline double Phi(double x) {
 		return 0.5 * (1 + erf(x / M_SQRT2));
 	}
@@ -23,7 +22,6 @@ namespace SiriusFM {
 	//------------------------------------------------------------------------//
 	// BSM Pricer (analytical solution with GBM):                             //
 	//------------------------------------------------------------------------//
-
 	inline double BSMPxCall(double a_S0, double a_K, double a_TTE,
 						double a_rateA, double a_rateB, double a_sigma) {
 		assert(a_S0 > 0 && a_K > 0 && a_sigma > 0);
@@ -67,6 +65,7 @@ namespace SiriusFM {
 
 	inline double BSMDeltaPut (double a_S0, double a_K, double a_TTE,
 								double a_rateA, double a_rateB, double a_sigma) {
+
 		// from Call-Put parity:
 		return BSMDeltaCall(a_S0, a_K, a_TTE, a_rateA, a_rateB, a_sigma) - 1;
 	}

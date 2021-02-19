@@ -1,10 +1,14 @@
+//==========================================================================//
+//                             "DiffusionLipton.h"                          //
+// Diffusion model with linear trend and Lipton-type vol                    //
+//==========================================================================//
+
 #pragma once
 
 #include <stdexcept>
 #include <cmath>
 
-namespace SiriusFM
-{
+namespace SiriusFM {
 	class DiffusionLipton {
 		private:
 			double const m_mu;
@@ -12,10 +16,11 @@ namespace SiriusFM
 			double const m_sigma1;
 			double const m_sigma2;
 			double const m_S0;
+
 		public:
 			DiffusionLipton(double a_mu, double a_sigma0, double a_sigma1, 
-							double a_sigma2, double a_S0):
-				m_mu(a_mu),
+							double a_sigma2, double a_S0)
+			: m_mu(a_mu),
 				m_sigma0(a_sigma0),
 				m_sigma1(a_sigma1),
 				m_sigma2(a_sigma2),

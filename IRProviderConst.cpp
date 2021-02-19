@@ -1,7 +1,12 @@
-#include <cstdio>
-#include <cstdlib>
+//==========================================================================//
+//                              "IRProviderConst.h"                         //
+// We read constant IRs from a file with data provided                      //
+//==========================================================================//
 
 #include "IRProviderConst.h"
+
+#include <cstdio>
+#include <cstdlib>
 
 namespace SiriusFM {
 
@@ -24,14 +29,13 @@ namespace SiriusFM {
 		char buf[BUF_SIZE];
 		char ccy[CCY_SIZE + 1] = "XXX";
 		
-		while (fgets(buf, BUF_SIZE, src)) {
+		while (fgets(buf, BUF_SIZE, src) != nullptr) {
 			if (*buf == '\0' || *buf == '\n' || *buf == '#')
 				continue;
 
 			strncpy(ccy, buf, CCY_SIZE);
-			m_IRs[int(Str2CcyE(ccy))] = atof(buf+ CCY_SIZE + 1);
+			m_IRs[int(Str2CcyE(ccy))] = atof(buf + CCY_SIZE + 1);
 		}
-
 		fclose(src);
 	}
 }

@@ -1,16 +1,13 @@
-#CXX = nvc++
-
 TARGET = Test5
-
 SOURCES = Test5 IRProviderConst
 
-EXTLIBS =
+CXX = g++
+#CXXFLAGS += -fopenmp
+#EXTLIBS = -lgomp
 
-#CXXFLAGS += -fomp
-CXXFLAGS += -MP -MMD -fPIC
-CXXFLAGS += -std=c++17 -Wall
-#CXXFLAGS += -O3 -DNDEBUG -march=native
-CXXFLAGS += -O3 -DNDEBUG -march=native -mtune=native
+#CXXFLAGS += -MP -MMD -fPIC
+CXXFLAGS += -std=c++17 -Wall -Wno-stringop-truncation
+CXXFLAGS += -O3 -DNDEBUG -march=native
 
 #LDFLAGS += -fPIC
 #LDFLAGS += -pthread

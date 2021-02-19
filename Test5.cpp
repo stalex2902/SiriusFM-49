@@ -1,6 +1,6 @@
 //==========================================================================//
 //                               "Test5.cpp"                                //
-// Testing GridNOP1D_S3_RKC1                                                //
+// Testing "GridNOP1D_S3_RKC1": pricing options (including American)        //
 //==========================================================================//
 
 #include "DiffusionGBM.h"
@@ -17,19 +17,19 @@ int main(int argc, char** argv) {
 
 	if (argc != 10) {
 		cerr << "PARAMS:\nsigma, S0,\n{Call/Put}, K, Tdays," 
-						"\nisAmerican, ratesFile \nNS, tauMins\n";
+																"\nisAmerican, ratesFile \nNS, tauMins\n";
 		return 1;
 	}
 
-	double sigma 					= atof(argv[1]);
-	double S0 						= atof(argv[2]);
-	const char* OptType 	= argv[3];
-	double K 							= atof(argv[4]);
-	long Tdays 						= atol(argv[5]);
+	double sigma 					= 		 atof(argv[1]);
+	double S0 						= 		 atof(argv[2]);
+	const char* OptType 	= 		 			argv[3];
+	double K 							= 		 atof(argv[4]);
+	long Tdays 						= 		 atol(argv[5]);
 	bool isAmerican 			= bool(atoi(argv[6]));
-	const char* ratesFile = argv[7];
-	int NS 								= atof(argv[8]);
-	int tauMins 					= atoi(argv[9]);
+	const char* ratesFile = 					argv[7];
+	int NS 								= 		 atof(argv[8]);
+	int tauMins 					= 		 atoi(argv[9]);
 
 	assert(sigma > 0 && S0 > 0 && Tdays > 0 
 						&& tau_mins > 0 && NS > 0);
@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
 		grid(ratesFile, ratesFile);
 
   // Presto! Run Backward Induction on the Grid (with default BFactor):
-  grid.Run<true>(opt, &diff, S0, t0, NS, tauMins);
+  grid.Run<false>(opt, &diff, S0, t0, NS, tauMins);
 
 	// get the (px, delta, gamma) at t = 0
 	auto res = grid.GetPxDeltaGamma0();

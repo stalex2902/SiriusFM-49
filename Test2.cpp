@@ -1,19 +1,19 @@
-/*
- * Testing MC Path Evaluator for option pricing: draft version
- */
-
-#include <iostream>
+//==========================================================================//
+//                               "Test2.cpp"                                //
+// Testing MC Path Evaluator for option pricing: draft version:             //
+// Path Evaluator is separate                                               //
+//==========================================================================//
 
 #include "IRProviderConst.h"
 #include "DiffusionGBM.h"
 #include "MCEngine1D.hpp"
 #include "VanillaOption.h"
 
-namespace SiriusFM
-{
+#include <iostream>
+
+namespace SiriusFM {
   // Path Evaluator for Option Pricing:
-  class OPPathEval
-  {
+  class OPPathEval {
   private:
     OptionFX const* const m_option;
     long   m_P;     // Total paths evaluated
@@ -33,7 +33,7 @@ namespace SiriusFM
       
     { assert(m_option != nullptr); }
 
-    void operator() (long a_L,     long a_PM,
+    void operator() (long a_L, long a_PM,
                      double const* a_paths, double const* a_ts)
     {
       for (long p = 0; p < a_PM; ++p)
@@ -53,6 +53,7 @@ namespace SiriusFM
     {
       if (m_P < 2)
         throw std::runtime_error("Empty OPPathEval");
+
       double px  =  m_sum  / double(m_P);
       double var = (m_sum2 - double(m_P) * px * px) / double(m_P - 1);
       assert(var >= 0);
@@ -65,28 +66,23 @@ namespace SiriusFM
 using namespace SiriusFM;
 using namespace std;
 
-int main(int argc, char** argv)
-{
-	if(argc != 9)
-	{
+int main(int argc, char** argv){ 
+	if(argc != 9) {
 		cerr << "params: mu, sigma, S0,\nCall/Put, K, Tdays,\ntau_mins, P\n";
 		return 1;
 	}
-	double mu = atof(argv[1]);
-	double sigma = atof(argv[2]);
-	double S0 = atof(argv[3]);
-	const char* OptType = argv[4];
-	double K = atof(argv[5]);
-	long T_days = atol(argv[6]);
-	int tau_mins = atoi(argv[7]);
-	long P = atol(argv[8]);
 
-	assert(sigma > 0 &&
-		   S0 > 0 &&
-		   T_days > 0 &&
-		   tau_mins > 0 &&
-		   P > 0 &&
-		   K > 0);
+	double 			mu 			 = atof(argv[1]);
+	double 			sigma		 = atof(argv[2]);
+	double 			S0 			 = atof(argv[3]);
+	const char* OptType  = 			argv[4];
+	double 			K 			 = atof(argv[5]);
+	long 				T_days   = atol(argv[6]);
+	int 				tau_mins = atoi(argv[7]);
+	long 				P 			 = atol(argv[8]);
+
+	assert(sigma > 0 && S0 > 0 && T_days > 0 &&
+		   tau_mins > 0 && P > 0 && K > 0);
 
 	CcyE ccyA = CcyE::USD;
 	CcyE ccyB = CcyE::USD;
@@ -99,11 +95,11 @@ int main(int argc, char** argv)
     mce(20000, 20000);
 
 	OptionFX const* opt = (strcmp(OptType, "Call") == 0)
-						? static_cast<OptionFX*>(new EurCallOptionFX(ccyA, ccyB, K, T_days))
-						: 
-						(strcmp(OptType, "Put") == 0)
-						? static_cast<OptionFX*> (new EurPutOptionFX(ccyA, ccyB, K, T_days))
-						:throw invalid_argument("Bad option type");
+				? static_cast<OptionFX*>(new EurCallOptionFX(ccyA, ccyB, K, T_days))
+				: 
+				(strcmp(OptType, "Put") == 0)
+				? static_cast<OptionFX*> (new EurPutOptionFX(ccyA, ccyB, K, T_days))
+				:throw invalid_argument("Bad option type");
 
 	time_t t0 = time(nullptr);
 	time_t T = t0 + SEC_IN_DAY * T_days;

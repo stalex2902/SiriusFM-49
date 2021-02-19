@@ -1,3 +1,11 @@
+//==========================================================================//
+//                               "IRProvider.h"                             //
+// Fully generic IRProvider parameterized by mode (only "Const" mode is     //
+// implemented)                                                             //
+// -------------------------------------------------------------------------//
+// Modes and Ccy types are implemented as enumerators                       //
+//==========================================================================//
+
 #pragma once
 
 #include <stdexcept>

@@ -1,3 +1,8 @@
+//==========================================================================//
+//                             "IRProviderConst.h"                          //
+// Implementation of IRProvider class in "Const" mode                       //
+//==========================================================================//
+
 #pragma once
 
 #include "IRProvider.h"
@@ -10,6 +15,7 @@ namespace SiriusFM {
 	class IRProvider<IRModeE::Const> {
 		private:
 			double m_IRs[int(CcyE::N)];
+
 		public:
 			IRProvider(char const* a_file);
 

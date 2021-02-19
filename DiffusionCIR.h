@@ -1,19 +1,25 @@
+//==========================================================================//
+//                               "DiffusionCIR.h"                           //
+// Diffusion model with mean-reverting trend and CIR vol (constant params)  //
+//==========================================================================//
+
 #pragma once
 
 #include <stdexcept>
 #include <cmath>
 
-namespace SiriusFM
-{
+namespace SiriusFM {
 	class DiffusionCIR {
 		private:
 			double const m_kappa;
 			double const m_theta;
 			double const m_sigma;
 			double const m_S0;
+
 		public:
-			DiffusionCIR(double a_kappa, double a_theta, double a_sigma, double a_S0):
-				m_kappa(a_kappa),
+			DiffusionCIR(double a_kappa, double a_theta, 
+																					double a_sigma, double a_S0)
+			:	m_kappa(a_kappa),
 				m_theta(a_theta),
 				m_sigma(a_sigma),
 				m_S0(a_S0)

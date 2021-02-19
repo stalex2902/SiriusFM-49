@@ -1,15 +1,21 @@
+//==========================================================================//
+//                           "MCOptionHedger1D.h"                           //
+// "MCOptionHedger" class declaration and implementation of OHPathEval      //
+// sub-class for option hedging                                             //
+//==========================================================================//
+
+#include "IRProviderConst.h"                                                    
+#include "MCEngine1D.hpp"                                                       
+#include "VanillaOption.h"
+
 #include <iostream>
 #include <functional>
 
-#include "IRProviderConst.h"
-#include "MCEngine1D.hpp"
-#include "VanillaOption.h"
-
 namespace SiriusFM {
 
-//==========================================================================//
-// "MCOptionHedger1D:"                                                      //
-//==========================================================================//
+  //------------------------------------------------------------------------//
+	// "MCOptionHedger1D:"                                                    //
+	//------------------------------------------------------------------------//
 	template
 	<
 		typename Diffusion1D, typename AProvider, typename BProvider,
@@ -21,26 +27,25 @@ namespace SiriusFM {
 				std::function<double(double, double)>; // function (S, t) -> Delta
 
 		private:	
-        //==================================================================//
-        // Path Evaluator for option pricing                                //
-        //==================================================================//
-
+      //--------------------------------------------------------------------//
+      // Path Evaluator for option hedging                                  //
+      //--------------------------------------------------------------------//
 			class OHPathEval {
 				private:
 					Option<AssetClassA, AssetClassB> const* const m_option;
 					AProvider const* const m_irpA;
 					BProvider const* const m_irpB;
-					double* m_ratesA;
-					double* m_ratesB;
-					double const m_C0; // Initial option premium
+					double* 							 m_ratesA;
+					double* 							 m_ratesB;
+					double const 					 m_C0; // Initial option premium
 					// Hedging policy:
 					DeltaFunc const* const m_DeltaFunc; 
-					double const 		   m_DeltaAcc; // Accuracy of delta rounding
-					long   		 m_P;   	 // Total path evaluator
-					double 		 m_sumPnL;   // Sum of residual P&Ls
-					double 		 m_sumPnL2;
-					double 		 m_minPnL;
-					double 		 m_maxPnL;
+					double const 		   		 m_DeltaAcc; // Accuracy of delta rounding
+					long   		 						 m_P;   	 // Total path evaluator
+					double 		 						 m_sumPnL;   // Sum of residual P&Ls
+					double 		 						 m_sumPnL2;
+					double 		 						 m_minPnL;
+					double 		 						 m_maxPnL;
  
 				public:
 					OHPathEval
@@ -48,23 +53,23 @@ namespace SiriusFM {
 						Option<AssetClassA, AssetClassB> const* a_option,
 						AProvider const* a_irpA,
 						BProvider const* a_irpB,
-						double a_C0,
+						double 					 a_C0,
 						DeltaFunc const* a_deltaFunc,
-						double a_deltaAcc
+						double 					 a_deltaAcc
 					)
-					: m_option(a_option),
-					  m_irpA(a_irpA),
-					  m_irpB(a_irpB),
-					  m_ratesA(nullptr),
-					  m_ratesB(nullptr),
-					  m_C0(a_C0),
+					: m_option	 (a_option),
+					  m_irpA		 (a_irpA),
+					  m_irpB		 (a_irpB),
+					  m_ratesA	 (nullptr),
+					  m_ratesB	 (nullptr),
+					  m_C0			 (a_C0),
 					  m_DeltaFunc(a_deltaFunc),
-					  m_DeltaAcc(a_deltaAcc),
-					  m_P(0),
-					  m_sumPnL(0),
-					  m_sumPnL2(0),
-					  m_minPnL( INFINITY),
-					  m_maxPnL(-INFINITY)
+					  m_DeltaAcc (a_deltaAcc),
+					  m_P				 (0),
+					  m_sumPnL	 (0),
+					  m_sumPnL2	 (0),
+					  m_minPnL	 ( INFINITY),
+					  m_maxPnL	 (-INFINITY)
 
 					{ assert(m_option != nullptr && m_DeltaFunc != nullptr 
 						&& m_DeltaAcc >= 0.0 && m_irpA != nullptr && m_irpB != nullptr); }
@@ -135,7 +140,7 @@ namespace SiriusFM {
 							double PnL = M + m_option->Payoff(a_L, path, a_ts) + 
 														delta * path[a_L - 1];
 							// Update the stats:	
-							m_sumPnL += PnL;
+							m_sumPnL  += PnL;
 							m_sumPnL2 += PnL * PnL;
 							m_minPnL = std::min<double>(m_minPnL, PnL);
 							m_maxPnL = std::max<double>(m_maxPnL, PnL);
@@ -156,15 +161,14 @@ namespace SiriusFM {
 					}
 			};
 
-			//==================================================================//
-			// Fields:                                                          //
-			//==================================================================//
-			
-			Diffusion1D const* const  m_diff;
+			//--------------------------------------------------------------------//
+			// Fields:                                                            //
+			//--------------------------------------------------------------------//
+			Diffusion1D const* const  	m_diff;
     		AProvider                 m_irpA;
     		BProvider                 m_irpB;
-    		MCEngine1D<Diffusion1D, AProvider, BProvider, AssetClassA, AssetClassB,
-               		   OHPathEval>    m_mce;
+    		MCEngine1D<Diffusion1D, AProvider, BProvider, AssetClassA,
+				AssetClassB, OHPathEval>  m_mce;
     		bool                      m_useTimerSeed;
 
 		public:
@@ -172,39 +176,38 @@ namespace SiriusFM {
 			MCOptionHedger1D
 			(
 				Diffusion1D const* a_diff, 
-				const char* 	   a_irsFileA, 
-				const char* 	   a_irsFileB,
-				bool 			   a_useTimerSeed
+				const char* 	   	 a_irsFileA, 
+				const char* 	   	 a_irsFileB,
+				bool 			   			 a_useTimerSeed
 			)			
-			: m_diff(a_diff),
-			  m_irpA(a_irsFileA),
-			  m_irpB(a_irsFileB),
-			  m_mce (102'271, 4096), // (5-min points in 1y) * 4k pats in-memory
+			: m_diff				(a_diff),
+			  m_irpA				(a_irsFileA),
+			  m_irpB				(a_irsFileB),
+			  m_mce 				(102'271, 4096), 
+															// (5-min points in 1y) * 4k pats in-memory
 			  m_useTimerSeed(a_useTimerSeed)
 			{}
 			
-			//==================================================================//
-			// Hedging Simulator                                                //
-			//==================================================================//
-
+			//--------------------------------------------------------------------//
+			// Hedging Simulator                                                  //
+			//--------------------------------------------------------------------//
 			std::tuple<double, double, double, double> SimulateHedging
 			(
 				// Instrument spec:
 				Option<AssetClassA, AssetClassB> const* a_option,
-				time_t a_t0, // start time
-				double a_C0,
+				time_t 					 a_t0, // start time
+				double 					 a_C0,
 				DeltaFunc const* a_deltaFunc,
-				double a_deltaAcc,
-				int a_tauMins = 15, // by default
-				long a_P = 100'000
+				double 					 a_deltaAcc,
+				int 						 a_tauMins = 15, // by default
+				long 						 a_P = 100'000
 			);
 			
-			//===================================================================//
-			// Accessors:                                                        //
-			//===================================================================//
-
+			//--------------------------------------------------------------------//
+			// Accessors for rates:                                               //
+			//--------------------------------------------------------------------//
 			double GetRateA(AssetClassA a_assetA, double a_ty) const {
-				return m_irpA.r(a_assetA, a_ty); 
+				return m_irpA.r(a_assetA, a_ty);
 			}
 			
 			double GetRateB(AssetClassB a_assetB, double a_ty) const {

@@ -1,3 +1,8 @@
+//==========================================================================//
+//                          "MCOptionHedging.hpp"                           //
+// Implementation of "SimulateHedging" method (using OHPathEvaluator)       //
+//==========================================================================//
+
 #pragma once
 
 #include "MCOptionHedger1D.h"
@@ -5,10 +10,9 @@
 
 namespace SiriusFM {
 
-	//========================================================================//
+	//------------------------------------------------------------------------//
 	// MCOptionHedger1D::SimulateHedging:                                     //
-	//========================================================================//	
-
+	//------------------------------------------------------------------------//
 	template
 	<
 		typename Diffusion1D, typename AProvider, typename BProvider,
@@ -16,7 +20,7 @@ namespace SiriusFM {
 	>
 	std::tuple<double, double, double, double> 
 	MCOptionHedger1D<Diffusion1D, AProvider, BProvider,
-							AssetClassA, AssetClassB>::
+																				AssetClassA, AssetClassB>::
 	SimulateHedging
 	(
 		Option<AssetClassA, AssetClassB> const* a_option,
@@ -28,7 +32,7 @@ namespace SiriusFM {
 		long a_P
 	)
 	{
-		assert(a_option != nullptr && a_tauMins > 0 && a_P > 0 
+		assert(a_option != nullptr && a_tauMins > 0 && a_P > 0
 										&& a_deltaFunc != nullptr && a_deltaAcc > 0);
 		
 		// Path Evaluator:

@@ -1,9 +1,15 @@
+//==========================================================================//
+//                              "MCEngine1D.hpp"                            //
+// Implementation of "Simulate" method: generates diffusion paths and calls //
+// "PathEvaluator" for option pricing/hedging/etc                           //
+//==========================================================================//
+
 #pragma once
+
+#include "MCEngine1D.h"
 
 #include <random>
 #include <cassert>
-
-#include "MCEngine1D.h"
 
 namespace SiriusFM {
 	template

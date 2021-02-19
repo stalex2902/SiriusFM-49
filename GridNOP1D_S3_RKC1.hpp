@@ -1,5 +1,6 @@
 //==========================================================================//
-//                         "GridNOP1D_S3_RKC1.hpp":                         //
+//                         "GridNOP1D_S3_RKC1.hpp"                          //
+// Implementation of "Run" and "GetPxDeltaGamma0" methods                   //
 //==========================================================================//
 
 #pragma once                                                                    
@@ -11,9 +12,9 @@
 
 namespace SiriusFM {
 
-	//========================================================================//
+	//------------------------------------------------------------------------//
 	// "Run" implemetation:                                                   //
-	//========================================================================//
+	//------------------------------------------------------------------------//
 	template                                                                      
 	<                                                                             
 		typename Diffusion1D, typename AProvider, typename BProvider,               
@@ -26,12 +27,13 @@ namespace SiriusFM {
 	(
 		Option<AssetClassA, AssetClassB> const* a_option, // option spec
 		Diffusion1D const* a_diff,
+
 		// grid params:
-		double a_S0,	 	 // S(t0): may differ from Diffusion1D starting point
-		time_t a_t0,	 	 // abs starting time
-		long a_Nints,  	 // # of S-intervals
-		int a_tauMins, 	 // TimeStep in mins
-		double a_BFactor //# of StDs for upper boundary
+		double a_S0,	 	  // S(t0): may differ from Diffusion1D starting point
+		time_t a_t0,	 	  // abs starting time
+		long 	 a_Nints,  	// # of S-intervals
+		int 	 a_tauMins, // TimeStep in mins
+		double a_BFactor  // # of StDs for upper boundary
 	)
 	{
 		//----------------------------------------------------------------------//
@@ -76,7 +78,7 @@ namespace SiriusFM {
 		for (int j = 0; j < m_M; ++j) {
 			// Advance the timeline:
 			double t = YearFrac(a_t0 + j * tauSec);
-			m_ts[j] = t;
+			m_ts[j]  = t;
 		
 			// Integrate E[S](t) and Var[S](t) curves:
 			// take rB(t) - rA(t) and cut the negative values to nake sure the grid 
@@ -88,7 +90,6 @@ namespace SiriusFM {
 			
 			// integrated rates:
 			if (j < m_M - 1) {
-
 				integrAB += rateDiff * tau;
 
 				// E[St]:
@@ -102,7 +103,7 @@ namespace SiriusFM {
 
 		double StDS = sqrt(m_VarS[m_M - 1]); // Estimated StD  at the end:
 		
-		double B = m_ES[m_M - 1] * a_BFactor * StDS; // Upper bound for S:
+		double B = m_ES[m_M - 1] + a_BFactor * StDS; // Upper bound for S:
 
 		// Generate the S-line:
 		double h = B / double(a_Nints); // S-step
@@ -170,7 +171,7 @@ namespace SiriusFM {
 				j += (IsFwd ? 1 : -1)) 
 		{
 			double const*  fj = m_grid + j * m_N; // prev time layer (j)
-			double* 			 fj1 = const_cast<double*>(IsFwd ? (fj + m_N) : fj - m_N);
+			double* 		  fj1 = const_cast<double*>(IsFwd ? (fj + m_N) : (fj - m_N));
 																	// curr time layer to be filled in (j+-1)
 			double tj 		= m_ts[j];
 			double rateAj = m_irpA.r(a_option->m_assetA, tj);
@@ -178,7 +179,8 @@ namespace SiriusFM {
 			double C1 		= (rateBj - rateAj) / (2 * h); 
 																						// coeff in the convective term
 			fj1[0] = fa; // low bound
-			
+
+//#			pragma omp parallel for
 			for (int i = 1; i <= m_N - 2; ++i) {
 				double Si   = m_S[i];
 				double fjiM = fj [i - 1];
@@ -198,15 +200,16 @@ namespace SiriusFM {
 
 					DfDt = - C1 * (SiP * fjiP - SiM * fjiM)
 								 + (sigmaP * sigmaP * fjiP - 2 * sigma * sigma * fji
-								 + sigmaM * sigmaM * fjiM) / D2;	
+								 + sigmaM * sigmaM * fjiM) / D2;
 					}
 
-				else
+				else {
 					// Black-Scholes-Merton:
 					double DfDt = rateBj * fji 							// reactive term
 											- C1 * Si * (fjiP - fjiM) 	// convective term
 											- sigma * sigma / D2 * (fjiP - 2 * fji + fjiM);
-				
+				}
+
 				//FIXME: we use Euler`s method insted of RKC1
 				fj1[i] = fji - tau * DfDt;
 			}
